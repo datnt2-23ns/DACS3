@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.ticketbookingapp.Activities.Dashboard.DashboardActivity
+import com.example.ticketbookingapp.Activities.Auth.LoginActivity
 import com.example.ticketbookingapp.R
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -38,7 +38,7 @@ class SplashActivity : AppCompatActivity() {
 
         setContent {
             SplashScreen(onGetStartedClick = {
-                startActivity(Intent(this, DashboardActivity::class.java))
+                startActivity(Intent(this, LoginActivity::class.java))
             })
         }
     }
