@@ -16,11 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ticketbookingapp.Domain.UserModel
 import com.example.ticketbookingapp.R
 
 @Composable
-@Preview
-fun TopBar() {
+fun TopBar(user: UserModel) {
     ConstraintLayout(
         modifier = Modifier
             .padding(horizontal = 32.dp)
@@ -63,7 +63,7 @@ fun TopBar() {
         )
 
         Text(
-            text = "Dante",
+            text = user.fullName, // Lấy tên từ UserModel
             color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
@@ -83,8 +83,23 @@ fun TopBar() {
                 .constrainAs(title) {
                     top.linkTo(profile.bottom)
                     bottom.linkTo(parent.bottom)
-
                 }
         )
     }
+}
+
+@Preview
+@Composable
+fun TopBarPreview() {
+    val dummyUser = UserModel(
+        username = "dante_123",
+        password = "UserTBA@123_",
+        role = "user",
+        email = "dante_123@gmail.com",
+        fullName = "Dante",
+        dateOfBirth = "19/09/2005",
+        gender = "Male",
+        phoneNumber = "0987654321"
+    )
+    TopBar(user = dummyUser)
 }

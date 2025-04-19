@@ -1,4 +1,38 @@
 {
+  "Bookings": {
+    "dante_123": {
+      "booking1": {
+        "bookingDate": "01 apr, 2025",
+        "date": "01 jun, 2025",
+        "flightId": "flight_001",
+        "from": "NewYork",
+        "price": 318.2,
+        "seats": "A1, A2",
+        "to": "LosAngles",
+        "typeClass": "First"
+      },
+      "booking2": {
+        "bookingDate": "15 mar, 2025",
+        "date": "01 apr, 2025",
+        "flightId": "flight_002",
+        "from": "NewYork",
+        "price": 250.5,
+        "seats": "B1, B2",
+        "to": "San Francisco",
+        "typeClass": "Business"
+      },
+      "booking3": {
+        "bookingDate": "10 apr, 2025",
+        "date": "15 may, 2025",
+        "flightId": "flight_003",
+        "from": "Chicago",
+        "price": 180.0,
+        "seats": "C1",
+        "to": "Miami",
+        "typeClass": "Economy"
+      }
+    }
+  },
   "Flights": [
     {
       "airlineLogo": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1740740063/DeltaAirline_cbklxb.png",
@@ -108,21 +142,23 @@
     }
   ],
   "Users": {
-    "BaoNgocCuteo": {
-      "email": "BNCuteo@gmail.com",
-      "password": "BNCT@123_",
-      "role": "user",
-      "username": "BaoNgocCuteo"
-    },
     "admin_123": {
+      "dateOfBirth": "01/01/2005",
       "email": "adminTBA@gmail.com",
+      "fullName": "3B",
+      "gender": "Male",
       "password": "AdminTBA@123_",
+      "phoneNumber": "1234567890",
       "role": "admin",
-      "username": "dante_123"
+      "username": "adminTBA"
     },
     "dante_123": {
+      "dateOfBirth": "19/09/2005",
       "email": "dante_123@gmail.com",
+      "fullName": "Dante",
+      "gender": "Male",
       "password": "UserTBA@123_",
+      "phoneNumber": "0987654321",
       "role": "user",
       "username": "dante_123"
     }

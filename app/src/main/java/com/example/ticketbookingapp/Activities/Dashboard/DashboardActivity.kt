@@ -1,5 +1,6 @@
 //package com.example.ticketbookingapp.Activities.Dashboard
 //
+//import android.content.Context
 //import android.content.Intent
 //import android.os.Bundle
 //import androidx.activity.compose.setContent
@@ -47,6 +48,12 @@
 //        enableEdgeToEdge()
 //        setContent {
 //            MainScreen()
+//        }
+//    }
+//
+//    companion object {
+//        fun newIntent(context: Context): Intent {
+//            return Intent(context, DashboardActivity::class.java)
 //        }
 //    }
 //}
@@ -237,6 +244,8 @@ package com.example.ticketbookingapp.Activities.Dashboard
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -263,25 +272,42 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
+import androidx.compose.ui.unit.sp
 import com.example.ticketbookingapp.Activities.SearchResult.SearchResultActivity
 import com.example.ticketbookingapp.Activities.Splash.GradientButton
 import com.example.ticketbookingapp.Activities.Splash.StatusTopBarColor
 import com.example.ticketbookingapp.Domain.LocationModel
+import com.example.ticketbookingapp.Domain.UserModel
 import com.example.ticketbookingapp.R
 import com.example.ticketbookingapp.ViewModel.MainViewModel
 
 class DashboardActivity : AppCompatActivity() {
+    private val TAG = "DashboardActivity"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Lấy UserModel từ Intent
+        val user = intent.getSerializableExtra("user") as? UserModel
+        if (user == null) {
+            Log.e(TAG, "User data not found in Intent")
+            Toast.makeText(this, "Error: User data not found", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        Log.d(TAG, "Received user: ${user.username}")
+
         setContent {
-            MainScreen()
+            StatusTopBarColor()
+            MainScreen(user = user)
         }
     }
 
@@ -293,8 +319,7 @@ class DashboardActivity : AppCompatActivity() {
 }
 
 @Composable
-@Preview
-fun MainScreen() {
+fun MainScreen(user: UserModel) {
     val locations = remember { mutableStateListOf<LocationModel>() }
     val viewModel = MainViewModel()
     var showLocationLoading by remember { mutableStateOf(true) }
@@ -307,24 +332,33 @@ fun MainScreen() {
     var returnDate by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val TAG = "MainScreen"
 
     StatusTopBarColor()
 
     LaunchedEffect(Unit) {
-        viewModel.loadLocations().observeForever { result ->
-            if (result != null) {
-                locations.clear()
-                locations.addAll(result)
-                showLocationLoading = false
-            } else {
-                errorMessage = "Failed to load locations"
-                showLocationLoading = false
+        try {
+            viewModel.loadLocations().observe(lifecycleOwner) { result ->
+                Log.d(TAG, "Received locations: ${result?.size ?: 0}")
+                if (result != null) {
+                    locations.clear()
+                    locations.addAll(result)
+                    showLocationLoading = false
+                } else {
+                    errorMessage = "Failed to load locations"
+                    showLocationLoading = false
+                }
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading locations: ${e.message}")
+            errorMessage = "Error loading locations: ${e.message}"
+            showLocationLoading = false
         }
     }
 
     Scaffold(
-        bottomBar = { MyBottomBar() },
+        bottomBar = { MyBottomBar(user = user, currentScreen = "Dashboard") }, // Truyền user vào MyBottomBar nếu cần
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -333,7 +367,7 @@ fun MainScreen() {
                 .padding(paddingValues = paddingValues)
         ) {
             item {
-                TopBar()
+                TopBar(user = user) // Đảm bảo TopBar không yêu cầu user nếu không cần
             }
             item {
                 Column(
@@ -429,21 +463,30 @@ fun MainScreen() {
                     Spacer(modifier = Modifier.height(16.dp))
                     GradientButton(
                         onClick = {
-                            if (from.isEmpty() || to.isEmpty() || departureDate.isEmpty() || typeClass.isEmpty()) {
-                                errorMessage = "Please fill all required fields"
-                                return@GradientButton
+                            try {
+                                if (from.isEmpty() || to.isEmpty() || departureDate.isEmpty() || typeClass.isEmpty()) {
+                                    errorMessage = "Please fill all required fields"
+                                    return@GradientButton
+                                }
+                                val totalPassengers = (adultPassenger.toIntOrNull() ?: 0) +
+                                        (childPassenger.toIntOrNull() ?: 0)
+                                if (totalPassengers <= 0) {
+                                    errorMessage = "At least one passenger is required"
+                                    return@GradientButton
+                                }
+                                val intent = Intent(context, SearchResultActivity::class.java).apply {
+                                    putExtra("from", from)
+                                    putExtra("to", to)
+                                    putExtra("departureDate", departureDate)
+                                    putExtra("returnDate", returnDate)
+                                    putExtra("typeClass", typeClass)
+                                    putExtra("numPassenger", totalPassengers.toString())
+                                }
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error starting SearchResultActivity: ${e.message}")
+                                errorMessage = "Error: Unable to search flights"
                             }
-                            val totalPassengers = (adultPassenger.toIntOrNull() ?: 0) +
-                                    (childPassenger.toIntOrNull() ?: 0)
-                            val intent = Intent(context, SearchResultActivity::class.java).apply {
-                                putExtra("from", from)
-                                putExtra("to", to)
-                                putExtra("departureDate", departureDate)
-                                putExtra("returnDate", returnDate)
-                                putExtra("typeClass", typeClass)
-                                putExtra("numPassenger", totalPassengers.toString())
-                            }
-                            startActivity(context, intent, null)
                         },
                         text = "Search"
                     )
@@ -454,6 +497,7 @@ fun MainScreen() {
                         Text(
                             text = message,
                             color = Color.Red,
+                            fontSize = 14.sp,
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
@@ -469,6 +513,7 @@ fun YellowTitle(text: String, modifier: Modifier = Modifier) {
         text = text,
         fontWeight = FontWeight.SemiBold,
         color = colorResource(R.color.orange),
+        fontSize = 16.sp,
         modifier = modifier
     )
 }
