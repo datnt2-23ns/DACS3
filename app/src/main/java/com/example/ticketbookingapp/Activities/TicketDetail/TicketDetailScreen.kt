@@ -19,6 +19,8 @@
 //@Composable
 //fun TicketDetailScreen(
 //    flight: FlightModel,
+//    selectedSeats: String,
+//    totalPrice: Double,
 //    onBackClick: () -> Unit,
 //    onDownloadTicketClick: () -> Unit
 //) {
@@ -40,20 +42,31 @@
 //            ) {
 //                val (topSection, ticketDetail) = createRefs()
 //
-//                TicketDetailHeader(onBackClick = onBackClick, Modifier.constrainAs(topSection) {
-//                    top.linkTo(parent.top)
-//                    start.linkTo(parent.start)
-//                    end.linkTo(parent.end)
-//                })
+//                TicketDetailHeader(
+//                    onBackClick = onBackClick,
+//                    modifier = Modifier.constrainAs(topSection) {
+//                        top.linkTo(parent.top)
+//                        start.linkTo(parent.start)
+//                        end.linkTo(parent.end)
+//                    }
+//                )
 //
-//                TicketDetailContent(flight = flight, Modifier.constrainAs(ticketDetail) {
-//                    top.linkTo(parent.top, margin = 110.dp)
-//                    start.linkTo(parent.start)
-//                    end.linkTo(parent.end)
-//                })
+//                TicketDetailContent(
+//                    flight = flight,
+//                    selectedSeats = selectedSeats,
+//                    totalPrice = totalPrice,
+//                    modifier = Modifier.constrainAs(ticketDetail) {
+//                        top.linkTo(parent.top, margin = 110.dp)
+//                        start.linkTo(parent.start)
+//                        end.linkTo(parent.end)
+//                    }
+//                )
 //            }
 //
-//            GradientButton(onClick = {}, text = "Download Ticket")
+//            GradientButton(
+//                onClick = onDownloadTicketClick,
+//                text = "Download Ticket"
+//            )
 //        }
 //    }
 //}
@@ -75,15 +88,20 @@ import com.example.ticketbookingapp.Activities.SeatSelect.TicketDetailHeader
 import com.example.ticketbookingapp.Activities.Splash.GradientButton
 import com.example.ticketbookingapp.Domain.FlightModel
 import com.example.ticketbookingapp.R
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun TicketDetailScreen(
     flight: FlightModel,
-    selectedSeats: String,          // Thêm tham số selectedSeats
-    totalPrice: Double,            // Thêm tham số totalPrice
+    selectedSeats: String,
+    totalPrice: Double,
     onBackClick: () -> Unit,
     onDownloadTicketClick: () -> Unit
 ) {
+    // Tính thời gian đặt vé
+    val currentTime = SimpleDateFormat("HH:mm - dd/MM/yyyy", Locale.getDefault()).format(Date())
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -113,8 +131,9 @@ fun TicketDetailScreen(
 
                 TicketDetailContent(
                     flight = flight,
-                    selectedSeats = selectedSeats, // Truyền selectedSeats
-                    totalPrice = totalPrice,      // Truyền totalPrice
+                    selectedSeats = selectedSeats,
+                    totalPrice = totalPrice,
+                    bookingTime = currentTime,
                     modifier = Modifier.constrainAs(ticketDetail) {
                         top.linkTo(parent.top, margin = 110.dp)
                         start.linkTo(parent.start)

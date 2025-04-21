@@ -1,6 +1,5 @@
 package com.example.ticketbookingapp.Activities.Dashboard
 
-//import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -41,25 +41,27 @@ fun DropDownList(
     loadingIcon: Painter,
     hint: String = "",
     showLocationLoading: Boolean,
-    onItemSelected: (String) -> Unit
+    onItemSelected: (String) -> Unit,
+    modifier: Modifier = Modifier // Thêm tham số modifier
 ) {
     var selectedItem by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
+        onExpandedChange = { expanded = !expanded },
+        modifier = modifier // Áp dụng modifier vào ExposedDropdownMenuBox
     ) {
         if (showLocationLoading) {
             Box(
                 modifier = Modifier
-                    .padding(top = 8.dp)
                     .fillMaxWidth()
+                    .height(60.dp) // Đồng bộ chiều cao với DatePickerItem
                     .background(
                         colorResource(R.color.lightPurple),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(8.dp) // Sử dụng 8.dp để đồng bộ
                     )
-                    .height(55.dp),
+                    .padding(top = 8.dp), // Đồng bộ padding
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -70,10 +72,11 @@ fun DropDownList(
                 onValueChange = { selectedItem = it },
                 readOnly = true,
                 modifier = Modifier
-                    .padding(top = 8.dp)
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .menuAnchor(),
+                    .height(60.dp) // Đồng bộ chiều cao với DatePickerItem
+                    .clip(RoundedCornerShape(8.dp)) // Sử dụng 8.dp để đồng bộ
+                    .menuAnchor()
+                    .padding(top = 8.dp), // Đồng bộ padding
                 placeholder = {
                     Text(
                         text = hint,
@@ -83,7 +86,11 @@ fun DropDownList(
                     )
                 },
                 leadingIcon = {
-                    Image(painter = loadingIcon, contentDescription = null)
+                    Image(
+                        painter = loadingIcon,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp) // Đồng bộ kích thước icon
+                    )
                 },
                 textStyle = TextStyle(
                     fontWeight = FontWeight.Bold,

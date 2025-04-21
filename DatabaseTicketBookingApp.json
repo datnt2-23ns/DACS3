@@ -26,7 +26,7 @@
         "date": "15 may, 2025",
         "flightId": "flight_003",
         "from": "Chicago",
-        "price": 180.0,
+        "price": 180,
         "seats": "C1",
         "to": "Miami",
         "typeClass": "Economy"
@@ -70,7 +70,7 @@
       "airlineLogo": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1740740063/southwestAirline_zjujlc.png",
       "airlineName": "Southwest Airlines",
       "arriveTime": "2h 45m",
-      "classSeat": "Business class",
+      "classSeat": "First class",
       "date": "10 jun, 2025",
       "from": "NewYork",
       "fromShort": "JFK",
@@ -86,7 +86,7 @@
       "airlineLogo": "https://res.cloudinary.com/dkikc5ywq/image/upload/v1740740064/unitedAirline_ra2hya.png",
       "airlineName": "United Airlines",
       "arriveTime": "2h 40m",
-      "classSeat": "Business class",
+      "classSeat": "Economy class",
       "date": "15 jun, 2025",
       "from": "NewYork",
       "fromShort": "JFK",
@@ -157,10 +157,20 @@
       "email": "dante_123@gmail.com",
       "fullName": "Dante",
       "gender": "Male",
-      "password": "UserTBA@123_",
+      "password": "123",
       "phoneNumber": "0987654321",
       "role": "user",
       "username": "dante_123"
+    },
+    "yuu_123": {
+      "dateOfBirth": "19/09/2005",
+      "email": "yuu-kun@gmail.com",
+      "fullName": "Yuu",
+      "gender": "Male",
+      "password": "123",
+      "phoneNumber": "0112267891",
+      "role": "user",
+      "username": "yuu_123"
     }
   }
 }

@@ -31,6 +31,8 @@
 //fun FlightItem(item: FlightModel, index: Int) {
 //    val context = LocalContext.current
 //
+//    println("Displaying flight: ${item.AirlineName}, From=${item.From}, To=${item.To}, Date=${item.Date}, TypeClass=${item.TypeClass}")
+//
 //    ConstraintLayout(
 //        modifier = Modifier
 //            .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -56,10 +58,8 @@
 //            model = item.AirlineLogo,
 //            contentDescription = "Airline logo",
 //            contentScale = ContentScale.Fit,
-////            placeholder = painterResource(R.drawable.placeholder_logo), // Thêm placeholder
-////            error = painterResource(R.drawable.error_logo), // Thêm hình lỗi
 //            modifier = Modifier
-//                .size(width = 120.dp, height = 40.dp) // Giảm kích thước logo
+//                .size(width = 120.dp, height = 40.dp)
 //                .constrainAs(logo) {
 //                    start.linkTo(parent.start)
 //                    top.linkTo(parent.top)
@@ -179,7 +179,7 @@
 //                .padding(end = 16.dp)
 //                .constrainAs(toTxt) {
 //                    top.linkTo(timeTxt.bottom)
-//                    end.linkTo(parent.end) // Đặt ở bên phải
+//                    end.linkTo(parent.end)
 //                }
 //        )
 //
@@ -205,7 +205,9 @@ import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -222,14 +224,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.example.ticketbookingapp.Activities.SeatSelect.SeatSelectActivity
 import com.example.ticketbookingapp.Domain.FlightModel
 import com.example.ticketbookingapp.R
 
 @Composable
-fun FlightItem(item: FlightModel, index: Int) {
+fun FlightItem(item: FlightModel, index: Int, numPassenger: Int) {
     val context = LocalContext.current
 
     println("Displaying flight: ${item.AirlineName}, From=${item.From}, To=${item.To}, Date=${item.Date}, TypeClass=${item.TypeClass}")
@@ -241,8 +243,9 @@ fun FlightItem(item: FlightModel, index: Int) {
             .clickable {
                 val intent = Intent(context, SeatSelectActivity::class.java).apply {
                     putExtra("flight", item)
+                    putExtra("numPassenger", numPassenger.toString())
                 }
-                startActivity(context, intent, null)
+                context.startActivity(intent)
             }
             .background(
                 color = colorResource(R.color.lightPurple),
@@ -255,21 +258,38 @@ fun FlightItem(item: FlightModel, index: Int) {
             fromTxt, fromShortTxt, toTxt, toShortTxt
         ) = createRefs()
 
-        AsyncImage(
-            model = item.AirlineLogo,
-            contentDescription = "Airline logo",
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .size(width = 120.dp, height = 40.dp)
-                .constrainAs(logo) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
+        if (item.AirlineLogo.isNotBlank()) {
+            AsyncImage(
+                model = item.AirlineLogo,
+                contentDescription = "Airline logo",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(width = 120.dp, height = 40.dp)
+                    .constrainAs(logo) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    },
+                onState = { state ->
+                    if (state is AsyncImagePainter.State.Error) {
+                        println("Error loading logo: ${state.result.throwable.message}")
+                    }
                 }
-        )
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(width = 120.dp, height = 40.dp)
+                    .constrainAs(logo) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    }
+            )
+        }
 
         Text(
-            text = item.ArriveTime,
+            text = item.ArriveTime.takeIf { it.isNotBlank() } ?: "N/A",
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
@@ -288,11 +308,13 @@ fun FlightItem(item: FlightModel, index: Int) {
             contentDescription = "Flight path icon",
             modifier = Modifier
                 .padding(top = 8.dp)
+                .size(width = 100.dp, height = 20.dp)
                 .constrainAs(airplaneIcon) {
                     start.linkTo(parent.start)
                     top.linkTo(timeTxt.bottom)
                     end.linkTo(parent.end)
-                }
+                },
+            contentScale = ContentScale.Fit
         )
 
         Image(
@@ -300,11 +322,14 @@ fun FlightItem(item: FlightModel, index: Int) {
             contentDescription = "Separator line",
             modifier = Modifier
                 .padding(top = 8.dp)
+                .fillMaxWidth()
+                .height(10.dp)
                 .constrainAs(dashLine) {
                     start.linkTo(parent.start)
                     top.linkTo(airplaneIcon.bottom)
                     end.linkTo(parent.end)
-                }
+                },
+            contentScale = ContentScale.FillWidth
         )
 
         Text(
@@ -317,7 +342,7 @@ fun FlightItem(item: FlightModel, index: Int) {
                 .constrainAs(priceTxt) {
                     top.linkTo(dashLine.bottom)
                     bottom.linkTo(parent.bottom)
-                    end.linkTo(parent.end)
+                    end.linkTo(parent.end, margin = 16.dp)
                 }
         )
 
@@ -326,15 +351,16 @@ fun FlightItem(item: FlightModel, index: Int) {
             contentDescription = "Seat icon",
             modifier = Modifier
                 .padding(8.dp)
+                .size(24.dp)
                 .constrainAs(seatIcon) {
-                    start.linkTo(parent.start)
+                    start.linkTo(parent.start, margin = 16.dp)
                     top.linkTo(dashLine.bottom)
                     bottom.linkTo(parent.bottom)
                 }
         )
 
         Text(
-            text = item.ClassSeat,
+            text = item.ClassSeat.takeIf { it.isNotBlank() } ?: "N/A",
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
             color = colorResource(R.color.darkPurple2),
@@ -347,7 +373,7 @@ fun FlightItem(item: FlightModel, index: Int) {
         )
 
         Text(
-            text = item.From,
+            text = item.From.takeIf { it.isNotBlank() } ?: "N/A",
             fontSize = 14.sp,
             color = Color.Black,
             modifier = Modifier
@@ -359,7 +385,7 @@ fun FlightItem(item: FlightModel, index: Int) {
         )
 
         Text(
-            text = item.FromShort,
+            text = item.FromShort.takeIf { it.isNotBlank() } ?: "N/A",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.Black,
@@ -373,7 +399,7 @@ fun FlightItem(item: FlightModel, index: Int) {
         )
 
         Text(
-            text = item.To,
+            text = item.To.takeIf { it.isNotBlank() } ?: "N/A",
             fontSize = 14.sp,
             color = Color.Black,
             modifier = Modifier
@@ -385,7 +411,7 @@ fun FlightItem(item: FlightModel, index: Int) {
         )
 
         Text(
-            text = item.ToShort,
+            text = item.ToShort.takeIf { it.isNotBlank() } ?: "N/A",
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.Black,
