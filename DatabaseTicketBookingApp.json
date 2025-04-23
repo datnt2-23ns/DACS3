@@ -31,6 +31,38 @@
         "to": "Miami",
         "typeClass": "Economy"
       }
+    },
+    "yuu_123": {
+      "-OOY36RE7SUDu4ovbira": {
+        "bookingDate": "21:32 - 23/04/2025",
+        "date": "01 jun, 2025",
+        "flightId": "flight_000",
+        "from": "NewYork",
+        "price": 341.2,
+        "seats": "B4,A1",
+        "to": "LosAngles",
+        "typeClass": "Business"
+      },
+      "-OOZqfh3R0v3gco0Axeu": {
+        "bookingDate": "05:52 - 24/04/2025",
+        "date": "10 jun, 2025",
+        "flightId": "flight_002",
+        "from": "NewYork",
+        "price": 318.2,
+        "seats": "A4,B4",
+        "to": "LosAngles",
+        "typeClass": "First"
+      },
+      "-OOZrHl329wYue4JP1UM": {
+        "bookingDate": "05:55 - 24/04/2025",
+        "date": "05 jun, 2025",
+        "flightId": "flight_001",
+        "from": "NewYork",
+        "price": 338.2,
+        "seats": "A4,B4",
+        "to": "LosAngles",
+        "typeClass": "Business"
+      }
     }
   },
   "Flights": [
@@ -40,11 +72,12 @@
       "arriveTime": "2h 45m",
       "classSeat": "Business class",
       "date": "01 jun, 2025",
+      "flightId": "flight_000",
       "from": "NewYork",
       "fromShort": "JFK",
       "numberSeat": 79,
       "price": 170.6,
-      "reservedSeats": "D1,B3,B3,F6,E4,D1,D5,A6,A8,E7,F9,D11",
+      "reservedSeats": "D1,B3,B3,F6,E4,D1,D5,A6,A8,E7,F9,D11,B4,A1",
       "time": "12:54",
       "to": "LosAngles",
       "toShort": "LAX",
@@ -56,11 +89,12 @@
       "arriveTime": "2h 30m",
       "classSeat": "Business class",
       "date": "05 jun, 2025",
+      "flightId": "flight_001",
       "from": "NewYork",
       "fromShort": "JFK",
       "numberSeat": 92,
       "price": 169.1,
-      "reservedSeats": "D1,B2,B3,F3,E2,D1,D5,A6",
+      "reservedSeats": "D1,B2,B3,F3,E2,D1,D5,A6,A1,B1,C1,A4,B4",
       "time": "18:20",
       "to": "LosAngles",
       "toShort": "LAX",
@@ -72,11 +106,12 @@
       "arriveTime": "2h 45m",
       "classSeat": "First class",
       "date": "10 jun, 2025",
+      "flightId": "flight_002",
       "from": "NewYork",
       "fromShort": "JFK",
       "numberSeat": 91,
       "price": 159.1,
-      "reservedSeats": "D1,B3,B3,F6,E4,D1,D5,A6",
+      "reservedSeats": "D1,B3,B3,F6,E4,D1,D5,A6,A4,B4",
       "time": "22:45",
       "to": "LosAngles",
       "toShort": "LAX",
@@ -88,6 +123,7 @@
       "arriveTime": "2h 40m",
       "classSeat": "Economy class",
       "date": "15 jun, 2025",
+      "flightId": "flight_003",
       "from": "NewYork",
       "fromShort": "JFK",
       "numberSeat": 98,
