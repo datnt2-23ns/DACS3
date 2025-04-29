@@ -13,6 +13,21 @@
         android:theme="@style/Theme.TicketBookingApp"
         tools:targetApi="31">
         <activity
+            android:name=".Activities.Admin.AdminBookingManagementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.Admin.AdminFlightManagementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.Admin.AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.Admin.FlightManagement.FlightManagementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.Admin.Dashboard.AdminDashboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.BookingHistory.BookingHistoryActivity"
             android:exported="false" />
         <activity
@@ -41,6 +56,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
