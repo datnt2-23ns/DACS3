@@ -169,7 +169,7 @@ fun PassengerCounter(
                 text = "$passengerCounter $title",
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
 

@@ -431,7 +431,7 @@ fun MainScreen(user: UserModel) {
                     YellowTitle("To")
                     DropDownList(
                         items = locationNames,
-                        loadingIcon = painterResource(R.drawable.from_ic),
+                        loadingIcon = painterResource(R.drawable.to_ic),
                         hint = "Select destination",
                         showLocationLoading = showLocationLoading,
                         onItemSelected = { selectedItem ->
@@ -467,6 +467,7 @@ fun MainScreen(user: UserModel) {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Column(modifier = Modifier.weight(1f)) {
                             YellowTitle("Departure date")
+                            Spacer(modifier = Modifier.height(10.dp)) //
                             DatePickerScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -484,6 +485,7 @@ fun MainScreen(user: UserModel) {
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             YellowTitle("Class")
+                            Spacer(modifier = Modifier.height(10.dp)) //
                             val classItems = listOf("Business", "First", "Economy")
                             DropDownList(
                                 items = classItems,

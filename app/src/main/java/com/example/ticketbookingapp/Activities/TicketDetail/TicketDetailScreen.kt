@@ -1,5 +1,8 @@
 //package com.example.ticketbookingapp.Activities.TicketDetail
 //
+//import android.content.Context
+//import android.content.Intent
+//import android.widget.Toast
 //import androidx.compose.foundation.background
 //import androidx.compose.foundation.layout.Box
 //import androidx.compose.foundation.layout.Column
@@ -7,14 +10,21 @@
 //import androidx.compose.foundation.rememberScrollState
 //import androidx.compose.foundation.verticalScroll
 //import androidx.compose.runtime.Composable
+//import androidx.compose.runtime.rememberCoroutineScope
 //import androidx.compose.ui.Modifier
+//import androidx.compose.ui.platform.LocalContext
 //import androidx.compose.ui.res.colorResource
 //import androidx.compose.ui.unit.dp
 //import androidx.constraintlayout.compose.ConstraintLayout
+//import com.example.ticketbookingapp.Activities.Dashboard.DashboardActivity
 //import com.example.ticketbookingapp.Activities.SeatSelect.TicketDetailHeader
 //import com.example.ticketbookingapp.Activities.Splash.GradientButton
+//import com.example.ticketbookingapp.Domain.BookingModel
 //import com.example.ticketbookingapp.Domain.FlightModel
+//import com.example.ticketbookingapp.Domain.UserModel
 //import com.example.ticketbookingapp.R
+//import com.example.ticketbookingapp.Repository.MainRepository
+//import kotlinx.coroutines.launch
 //import java.text.SimpleDateFormat
 //import java.util.*
 //
@@ -23,10 +33,13 @@
 //    flight: FlightModel,
 //    selectedSeats: String,
 //    totalPrice: Double,
+//    user: UserModel,
 //    onBackClick: () -> Unit,
 //    onDownloadTicketClick: () -> Unit
 //) {
-//    // Tính thời gian đặt vé
+//    val context = LocalContext.current
+//    val coroutineScope = rememberCoroutineScope()
+//    val repository = MainRepository()
 //    val currentTime = SimpleDateFormat("HH:mm - dd/MM/yyyy", Locale.getDefault()).format(Date())
 //
 //    Box(
@@ -70,7 +83,65 @@
 //            }
 //
 //            GradientButton(
-//                onClick = onDownloadTicketClick,
+//                onClick = {
+//                    coroutineScope.launch {
+//                        try {
+//                            // Kiểm tra flightId
+//                            val flightId = flight.FlightId
+//                            if (flightId.isEmpty()) {
+//                                Toast.makeText(context, "Lỗi: Mã chuyến bay không hợp lệ", Toast.LENGTH_LONG).show()
+//                                return@launch
+//                            }
+//
+//                            // Kiểm tra xem vé đã tồn tại chưa
+//                            val bookingExists = repository.checkBookingExists(
+//                                username = user.username,
+//                                flightId = flightId,
+//                                seats = selectedSeats
+//                            )
+//                            if (bookingExists) {
+//                                Toast.makeText(context, "Vé này đã được đặt trước đó!", Toast.LENGTH_LONG).show()
+//                                return@launch
+//                            }
+//
+//                            // Tạo BookingModel
+//                            val booking = BookingModel(
+//                                flightId = flightId,
+//                                date = flight.Date,
+//                                from = flight.From,
+//                                to = flight.To,
+//                                typeClass = flight.TypeClass,
+//                                seats = selectedSeats,
+//                                price = totalPrice,
+//                                bookingDate = currentTime
+//                            )
+//
+//                            // Lưu vé
+//                            val saveResult = repository.saveBooking(user.username, booking)
+//                            if (saveResult.isFailure) {
+//                                Toast.makeText(context, "Lỗi khi lưu vé: ${saveResult.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
+//                                return@launch
+//                            }
+//
+//                            // Cập nhật reservedSeats trong Flights
+//                            val updateSeatsResult = repository.updateFlightReservedSeats(flightId, selectedSeats)
+//                            if (updateSeatsResult.isFailure) {
+//                                Toast.makeText(context, "Lỗi khi cập nhật ghế: ${updateSeatsResult.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
+//                                return@launch
+//                            }
+//
+//                            // Thông báo thành công và chuyển hướng
+//                            Toast.makeText(context, "Đặt vé thành công!", Toast.LENGTH_LONG).show()
+//                            context.startActivity(Intent(context, DashboardActivity::class.java).apply {
+//                                putExtra("user", user)
+//                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+//                            })
+//                            onDownloadTicketClick()
+//                        } catch (e: Exception) {
+//                            Toast.makeText(context, "Lỗi khi đặt vé: ${e.message}", Toast.LENGTH_LONG).show()
+//                        }
+//                    }
+//                },
 //                text = "Booking Tickets"
 //            )
 //        }
@@ -114,7 +185,8 @@ fun TicketDetailScreen(
     totalPrice: Double,
     user: UserModel,
     onBackClick: () -> Unit,
-    onDownloadTicketClick: () -> Unit
+    onDownloadTicketClick: () -> Unit,
+    isHistoryView: Boolean = false // Thêm tham số
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -152,7 +224,7 @@ fun TicketDetailScreen(
                     flight = flight,
                     selectedSeats = selectedSeats,
                     totalPrice = totalPrice,
-                    bookingTime = currentTime,
+                    bookingTime = if (isHistoryView) flight.bookingTime else currentTime, // Sử dụng bookingTime từ flight nếu là lịch sử
                     modifier = Modifier.constrainAs(ticketDetail) {
                         top.linkTo(parent.top, margin = 110.dp)
                         start.linkTo(parent.start)
@@ -161,68 +233,78 @@ fun TicketDetailScreen(
                 )
             }
 
-            GradientButton(
-                onClick = {
-                    coroutineScope.launch {
-                        try {
-                            // Kiểm tra flightId
-                            val flightId = flight.FlightId
-                            if (flightId.isEmpty()) {
-                                Toast.makeText(context, "Lỗi: Mã chuyến bay không hợp lệ", Toast.LENGTH_LONG).show()
-                                return@launch
+            // Chỉ hiển thị nút Booking Tickets nếu không phải chế độ lịch sử
+            if (!isHistoryView) {
+                GradientButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            try {
+                                // Kiểm tra flightId
+                                val flightId = flight.FlightId
+                                if (flightId.isEmpty()) {
+                                    Toast.makeText(context, "Lỗi: Mã chuyến bay không hợp lệ", Toast.LENGTH_LONG).show()
+                                    return@launch
+                                }
+
+                                // Kiểm tra xem vé đã tồn tại chưa
+                                val bookingExists = repository.checkBookingExists(
+                                    username = user.username,
+                                    flightId = flightId,
+                                    seats = selectedSeats
+                                )
+                                if (bookingExists) {
+                                    Toast.makeText(context, "Vé này đã được đặt trước đó!", Toast.LENGTH_LONG).show()
+                                    return@launch
+                                }
+
+                                // Tạo BookingModel với các trường mới
+                                val booking = BookingModel(
+                                    flightId = flightId,
+                                    date = flight.Date,
+                                    from = flight.From,
+                                    to = flight.To,
+                                    typeClass = flight.TypeClass,
+                                    seats = selectedSeats,
+                                    price = totalPrice,
+                                    bookingDate = currentTime,
+                                    airlineName = flight.AirlineName,
+                                    airlineLogo = flight.AirlineLogo,
+                                    arriveTime = flight.ArriveTime,
+                                    fromShort = flight.FromShort,
+                                    toShort = flight.ToShort,
+                                    time = flight.Time,
+                                    classSeat = flight.ClassSeat
+                                )
+
+                                // Lưu vé
+                                val saveResult = repository.saveBooking(user.username, booking)
+                                if (saveResult.isFailure) {
+                                    Toast.makeText(context, "Lỗi khi lưu vé: ${saveResult.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
+                                    return@launch
+                                }
+
+                                // Cập nhật reservedSeats trong Flights
+                                val updateSeatsResult = repository.updateFlightReservedSeats(flightId, selectedSeats)
+                                if (updateSeatsResult.isFailure) {
+                                    Toast.makeText(context, "Lỗi khi cập nhật ghế: ${updateSeatsResult.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
+                                    return@launch
+                                }
+
+                                // Thông báo thành công và chuyển hướng
+                                Toast.makeText(context, "Đặt vé thành công!", Toast.LENGTH_LONG).show()
+                                context.startActivity(Intent(context, DashboardActivity::class.java).apply {
+                                    putExtra("user", user)
+                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                })
+                                onDownloadTicketClick()
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Lỗi khi đặt vé: ${e.message}", Toast.LENGTH_LONG).show()
                             }
-
-                            // Kiểm tra xem vé đã tồn tại chưa
-                            val bookingExists = repository.checkBookingExists(
-                                username = user.username,
-                                flightId = flightId,
-                                seats = selectedSeats
-                            )
-                            if (bookingExists) {
-                                Toast.makeText(context, "Vé này đã được đặt trước đó!", Toast.LENGTH_LONG).show()
-                                return@launch
-                            }
-
-                            // Tạo BookingModel
-                            val booking = BookingModel(
-                                flightId = flightId,
-                                date = flight.Date,
-                                from = flight.From,
-                                to = flight.To,
-                                typeClass = flight.TypeClass,
-                                seats = selectedSeats,
-                                price = totalPrice,
-                                bookingDate = currentTime
-                            )
-
-                            // Lưu vé
-                            val saveResult = repository.saveBooking(user.username, booking)
-                            if (saveResult.isFailure) {
-                                Toast.makeText(context, "Lỗi khi lưu vé: ${saveResult.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
-                                return@launch
-                            }
-
-                            // Cập nhật reservedSeats trong Flights
-                            val updateSeatsResult = repository.updateFlightReservedSeats(flightId, selectedSeats)
-                            if (updateSeatsResult.isFailure) {
-                                Toast.makeText(context, "Lỗi khi cập nhật ghế: ${updateSeatsResult.exceptionOrNull()?.message}", Toast.LENGTH_LONG).show()
-                                return@launch
-                            }
-
-                            // Thông báo thành công và chuyển hướng
-                            Toast.makeText(context, "Đặt vé thành công!", Toast.LENGTH_LONG).show()
-                            context.startActivity(Intent(context, DashboardActivity::class.java).apply {
-                                putExtra("user", user)
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                            })
-                            onDownloadTicketClick()
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "Lỗi khi đặt vé: ${e.message}", Toast.LENGTH_LONG).show()
                         }
-                    }
-                },
-                text = "Booking Tickets"
-            )
+                    },
+                    text = "Booking Tickets"
+                )
+            }
         }
     }
 }

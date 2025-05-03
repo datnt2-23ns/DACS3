@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.ticketbookingapp.R
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -71,6 +72,7 @@ fun DatePickerItem(
 ) {
     Row(
         modifier = modifier
+            .fillMaxWidth()
             .height(60.dp)
             .padding(top = 8.dp)
             .background(
@@ -96,7 +98,8 @@ fun DatePickerItem(
                 .padding(horizontal = 8.dp),
             color = Color.Black,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            fontSize = 16.sp
         )
     }
 }

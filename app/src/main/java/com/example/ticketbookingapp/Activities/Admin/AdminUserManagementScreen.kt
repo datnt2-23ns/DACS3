@@ -16,20 +16,19 @@
 //import com.example.ticketbookingapp.Domain.UserModel
 //import com.example.ticketbookingapp.R
 //import com.example.ticketbookingapp.ViewModel.AdminViewModel
-//import com.example.ticketbookingapp.ViewModel.BookingWithMetadata
 //import kotlinx.coroutines.launch
 //
 //@Composable
-//fun AdminBookingManagementScreen(
+//fun AdminUserManagementScreen(
 //    adminViewModel: AdminViewModel,
 //    user: UserModel,
 //    onBackToDashboard: () -> Unit
 //) {
 //    var isLoading by remember { mutableStateOf(false) }
 //    val coroutineScope = rememberCoroutineScope()
-//    val bookings by adminViewModel.bookings.collectAsState()
+//    val users by adminViewModel.users.collectAsState()
 //    val context = LocalContext.current
-//    val TAG = "AdminBookingManagementScreen"
+//    val TAG = "AdminUserManagementScreen"
 //
 //    Box(
 //        modifier = Modifier
@@ -44,7 +43,7 @@
 //            verticalArrangement = Arrangement.Top
 //        ) {
 //            Text(
-//                text = "Quản Lý Đặt Vé",
+//                text = "Quản Lý Người Dùng",
 //                fontSize = 32.sp,
 //                color = Color.White
 //            )
@@ -56,18 +55,15 @@
 //            )
 //            Spacer(modifier = Modifier.height(32.dp))
 //
-//            bookings.forEach { bookingWithMetadata ->
-//                BookingItem(
-//                    bookingWithMetadata = bookingWithMetadata,
-//                    onCancel = {
+//            users.forEach { userItem ->
+//                UserItem(
+//                    user = userItem,
+//                    onDelete = {
 //                        coroutineScope.launch {
 //                            isLoading = true
 //                            try {
-//                                adminViewModel.cancelBooking(
-//                                    bookingWithMetadata.userId,
-//                                    bookingWithMetadata.bookingId
-//                                )
-//                                Toast.makeText(context, "Hủy đặt vé thành công", Toast.LENGTH_SHORT).show()
+//                                adminViewModel.deleteUser(userItem.username)
+//                                Toast.makeText(context, "Xóa người dùng thành công", Toast.LENGTH_SHORT).show()
 //                            } catch (e: Exception) {
 //                                Toast.makeText(context, "Lỗi: ${e.message}", Toast.LENGTH_SHORT).show()
 //                            } finally {
@@ -95,8 +91,7 @@
 //}
 //
 //@Composable
-//fun BookingItem(bookingWithMetadata: BookingWithMetadata, onCancel: () -> Unit) {
-//    val booking = bookingWithMetadata.booking
+//fun UserItem(user: UserModel, onDelete: () -> Unit) {
 //    Row(
 //        modifier = Modifier
 //            .fillMaxWidth()
@@ -106,19 +101,21 @@
 //        verticalAlignment = Alignment.CenterVertically
 //    ) {
 //        Column(modifier = Modifier.padding(16.dp)) {
-//            Text(text = "User: ${bookingWithMetadata.userId}", color = Color.White)
-//            Text(text = "Chuyến: ${booking.from} -> ${booking.to}", color = Color.White) // Sửa: From, To
-//            Text(text = "Ngày: ${booking.date}", color = Color.White) // Sửa: Date
-//            Text(text = "Ghế: ${booking.seats}", color = Color.White) // Sửa: Seats
+//            Text(text = "Họ tên: ${user.fullName}", color = Color.White)
+//            Text(text = "Email: ${user.email}", color = Color.White)
+//            Text(text = "Số điện thoại: ${user.phoneNumber}", color = Color.White)
+//            Text(text = "Ngày sinh: ${user.dateOfBirth}", color = Color.White)
+//            Text(text = "Giới tính: ${user.gender}", color = Color.White)
 //        }
-//        Button(onClick = onCancel) {
-//            Text("Hủy")
+//        Button(onClick = onDelete) {
+//            Text("Xóa")
 //        }
 //    }
 //}
 
 package com.example.ticketbookingapp.Activities.Admin
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -133,23 +130,23 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ticketbookingapp.Activities.Splash.GradientButton
-import com.example.ticketbookingapp.Domain.FlightModel
 import com.example.ticketbookingapp.Domain.UserModel
 import com.example.ticketbookingapp.R
 import com.example.ticketbookingapp.ViewModel.AdminViewModel
-import com.example.ticketbookingapp.ViewModel.BookingWithMetadata
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminBookingManagementScreen(
+fun AdminUserManagementScreen(
     adminViewModel: AdminViewModel,
     user: UserModel,
     onBackToDashboard: () -> Unit
 ) {
     var isLoading by remember { mutableStateOf(false) }
-    val bookings by adminViewModel.bookings.collectAsState()
-    val flights by adminViewModel.flights.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    val users by adminViewModel.users.collectAsState()
     val context = LocalContext.current
-    val TAG = "AdminBookingManagementScreen"
+    val TAG = "AdminUserManagementScreen"
 
     Box(
         modifier = Modifier
@@ -164,7 +161,7 @@ fun AdminBookingManagementScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Quản Lý Đặt Vé",
+                text = "Quản Lý Người Dùng",
                 fontSize = 32.sp,
                 color = Color.White
             )
@@ -177,12 +174,28 @@ fun AdminBookingManagementScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             LazyColumn(
-                modifier = Modifier.weight(1f), // Chiếm không gian còn lại
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(bookings) { bookingWithMetadata ->
-                    val flight = flights.find { it.FlightId == bookingWithMetadata.booking.flightId }
-                    BookingItem(bookingWithMetadata = bookingWithMetadata, flight = flight)
+                items(users) { userItem ->
+                    UserItem(
+                        user = userItem,
+                        onDelete = {
+                            coroutineScope.launch {
+                                isLoading = true
+                                try {
+                                    adminViewModel.deleteUser(userItem.username)
+                                    Toast.makeText(context, "Xóa người dùng thành công", Toast.LENGTH_SHORT).show()
+                                } catch (e: Exception) {
+                                    Toast.makeText(context, "Lỗi: ${e.message}", Toast.LENGTH_SHORT).show()
+                                } finally {
+                                    isLoading = false
+                                }
+                            }
+                        }
+                    )
                 }
             }
 
@@ -203,8 +216,7 @@ fun AdminBookingManagementScreen(
 }
 
 @Composable
-fun BookingItem(bookingWithMetadata: BookingWithMetadata, flight: FlightModel?) {
-    val booking = bookingWithMetadata.booking
+fun UserItem(user: UserModel, onDelete: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -214,16 +226,20 @@ fun BookingItem(bookingWithMetadata: BookingWithMetadata, flight: FlightModel?) 
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "User: ${bookingWithMetadata.userId}", color = Color.White)
-            Text(text = "Hãng bay: ${flight?.AirlineName ?: "N/A"}", color = Color.White)
-            Text(text = "Chuyến: ${booking.from} (${flight?.FromShort ?: "N/A"}) -> ${booking.to} (${flight?.ToShort ?: "N/A"})", color = Color.White)
-            Text(text = "Ngày: ${booking.date}", color = Color.White)
-            Text(text = "Giờ: ${flight?.Time ?: "N/A"}", color = Color.White)
-            Text(text = "Thời gian bay: ${flight?.ArriveTime ?: "N/A"}", color = Color.White)
-            Text(text = "Ghế: ${booking.seats}", color = Color.White)
-            Text(text = "Giá: $${String.format("%.2f", booking.price)}", color = Color.White)
-            Text(text = "Loại vé: ${booking.typeClass}", color = Color.White)
-            Text(text = "Ngày đặt: ${booking.bookingDate}", color = Color.White)
+            Text(text = "Họ tên: ${user.fullName}", color = Color.White)
+            Text(text = "Email: ${user.email}", color = Color.White)
+            Text(text = "Số điện thoại: ${user.phoneNumber}", color = Color.White)
+            Text(text = "Ngày sinh: ${user.dateOfBirth}", color = Color.White)
+            Text(text = "Giới tính: ${user.gender}", color = Color.White)
+        }
+        Button(
+            onClick = onDelete,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFD32F2F), // Màu đỏ cho nút Xóa
+                contentColor = Color.White
+            )
+        ) {
+            Text("Xóa")
         }
     }
 }

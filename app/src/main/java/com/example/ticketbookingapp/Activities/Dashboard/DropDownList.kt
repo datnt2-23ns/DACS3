@@ -81,7 +81,7 @@ fun DropDownList(
                     Text(
                         text = hint,
                         color = Color.Black,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
                 },

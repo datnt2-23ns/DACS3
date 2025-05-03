@@ -156,7 +156,6 @@
 //                }
 //            }
 //
-//            // Spacer cuối để đảm bảo cuộn
 //            item {
 //                Spacer(modifier = Modifier.height(16.dp))
 //            }
@@ -256,7 +255,7 @@
 //                Text(
 //                    text = "${booking.from} to ${booking.to}",
 //                    color = Color.Black,
-//                    fontWeight = FontWeight.Bold, // In đậm
+//                    fontWeight = FontWeight.Bold,
 //                    fontSize = 16.sp
 //                )
 //                Text(
@@ -315,36 +314,54 @@
 //                    fontSize = 14.sp
 //                )
 //            }
+//            Spacer(modifier = Modifier.height(4.dp))
+//            Row {
+//                Text(
+//                    text = "Booking Time: ",
+//                    color = Color.Black,
+//                    fontWeight = FontWeight.Bold,
+//                    fontSize = 14.sp
+//                )
+//                Text(
+//                    text = booking.bookingDate,
+//                    color = Color.Black,
+//                    fontWeight = FontWeight.Normal,
+//                    fontSize = 14.sp
+//                )
+//            }
 //        }
 //    }
 //}
 
 package com.example.ticketbookingapp.Activities.BookingHistory
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.example.ticketbookingapp.Activities.Dashboard.MyBottomBar
 import com.example.ticketbookingapp.Activities.Dashboard.YellowTitle
+import com.example.ticketbookingapp.Activities.TicketDetail.TicketDetailActivity
 import com.example.ticketbookingapp.Domain.BookingModel
+import com.example.ticketbookingapp.Domain.FlightModel
 import com.example.ticketbookingapp.Domain.UserModel
 import com.example.ticketbookingapp.R
 import com.google.firebase.database.DataSnapshot
@@ -405,7 +422,7 @@ fun BookingHistoryScreen(user: UserModel) {
                 .background(colorResource(R.color.darkPurple2))
                 .padding(paddingValues)
                 .padding(horizontal = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp) // Tăng khoảng cách giữa các section
         ) {
             item {
                 BookingHistoryTopBar(user = user)
@@ -415,11 +432,7 @@ fun BookingHistoryScreen(user: UserModel) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            colorResource(R.color.darkPurple),
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                        .padding(vertical = 16.dp, horizontal = 24.dp)
+                        .padding(vertical = 8.dp) // Giảm padding để sát lề
                 ) {
                     YellowTitle("Upcoming Bookings")
                     Spacer(modifier = Modifier.height(16.dp))
@@ -433,7 +446,7 @@ fun BookingHistoryScreen(user: UserModel) {
                         )
                     } else {
                         upcomingBookings.forEach { booking ->
-                            BookingCard(booking)
+                            BookingItem(booking, user)
                             Divider(
                                 color = Color.Black.copy(alpha = 0.2f),
                                 thickness = 1.dp,
@@ -448,11 +461,7 @@ fun BookingHistoryScreen(user: UserModel) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            colorResource(R.color.darkPurple),
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                        .padding(vertical = 16.dp, horizontal = 24.dp)
+                        .padding(vertical = 8.dp) // Giảm padding để sát lề
                 ) {
                     YellowTitle("Past Bookings")
                     Spacer(modifier = Modifier.height(16.dp))
@@ -466,7 +475,7 @@ fun BookingHistoryScreen(user: UserModel) {
                         )
                     } else {
                         pastBookings.forEach { booking ->
-                            BookingCard(booking)
+                            BookingItem(booking, user)
                             Divider(
                                 color = Color.Black.copy(alpha = 0.2f),
                                 thickness = 1.dp,
@@ -554,102 +563,216 @@ fun BookingHistoryTopBar(user: UserModel) {
 }
 
 @Composable
-fun BookingCard(booking: BookingModel) {
-    Card(
+fun BookingItem(
+    booking: BookingModel,
+    user: UserModel
+) {
+    val context = LocalContext.current
+
+    // Tạo FlightModel từ BookingModel để truyền sang TicketDetailActivity
+    val flight = FlightModel(
+        FlightId = booking.flightId,
+        AirlineName = booking.airlineName,
+        AirlineLogo = booking.airlineLogo,
+        ArriveTime = booking.arriveTime,
+        ClassSeat = booking.classSeat,
+        TypeClass = booking.typeClass,
+        Date = booking.date,
+        From = booking.from,
+        FromShort = booking.fromShort,
+        Price = booking.price,
+        To = booking.to,
+        ToShort = booking.toShort,
+        Time = booking.time,
+        bookingTime = booking.bookingDate
+    )
+
+    ConstraintLayout(
         modifier = Modifier
-            .fillMaxWidth()
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(12.dp)),
-        colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.lightPurple)
-        ),
-        shape = RoundedCornerShape(12.dp)
+            .fillMaxWidth() // Vé trải rộng toàn chiều rộng
+            .padding(vertical = 8.dp) // Giảm padding ngang để dài hơn
+            .clickable {
+                val intent = Intent(context, TicketDetailActivity::class.java).apply {
+                    putExtra("flight", flight)
+                    putExtra("user", user)
+                    putExtra("selectedSeats", booking.seats)
+                    putExtra("totalPrice", booking.price)
+                    putExtra("bookingTime", booking.bookingDate)
+                    putExtra("isHistoryView", true)
+                }
+                context.startActivity(intent)
+            }
+            .background(
+                color = colorResource(R.color.lightPurple),
+                shape = RoundedCornerShape(15.dp)
+            )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "${booking.from} to ${booking.to}",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-                Text(
-                    text = "$${booking.price}",
-                    color = colorResource(R.color.orange),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row {
-                    Text(
-                        text = "Date: ",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                    Text(
-                        text = "${booking.date}",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp
-                    )
+        val (
+            logo, timeTxt, airplaneIcon, dashLine,
+            priceTxt, seatIcon, classTxt,
+            fromTxt, fromShortTxt, toTxt, toShortTxt
+        ) = createRefs()
+
+        if (booking.airlineLogo.isNotBlank()) {
+            AsyncImage(
+                model = booking.airlineLogo,
+                contentDescription = "Airline logo",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(width = 120.dp, height = 40.dp)
+                    .constrainAs(logo) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    },
+                onState = { state ->
+                    if (state is AsyncImagePainter.State.Error) {
+                        println("Error loading logo: ${state.result.throwable.message}")
+                    }
                 }
-                Row {
-                    Text(
-                        text = "Class: ",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                    Text(
-                        text = "${booking.typeClass}",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Row {
-                Text(
-                    text = "Seats: ",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = "${booking.seats}",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Row {
-                Text(
-                    text = "Booking Time: ",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = booking.bookingDate,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp
-                )
-            }
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(width = 120.dp, height = 40.dp)
+                    .constrainAs(logo) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                    }
+            )
         }
+
+        Text(
+            text = booking.arriveTime.takeIf { it.isNotBlank() } ?: "N/A",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp,
+            color = colorResource(R.color.darkPurple2),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .constrainAs(timeTxt) {
+                    start.linkTo(parent.start)
+                    top.linkTo(logo.bottom)
+                    end.linkTo(parent.end)
+                }
+        )
+
+        Image(
+            painter = painterResource(R.drawable.line_airple_blue),
+            contentDescription = "Flight path icon",
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .constrainAs(airplaneIcon) {
+                    start.linkTo(parent.start)
+                    top.linkTo(timeTxt.bottom)
+                    end.linkTo(parent.end)
+                },
+            contentScale = ContentScale.Fit
+        )
+
+        Image(
+            painter = painterResource(R.drawable.dash_line),
+            contentDescription = "Separator line",
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .constrainAs(dashLine) {
+                    start.linkTo(parent.start)
+                    top.linkTo(airplaneIcon.bottom)
+                    end.linkTo(parent.end)
+                },
+            contentScale = ContentScale.FillWidth
+        )
+
+        Text(
+            text = "$${String.format("%.2f", booking.price)}",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 25.sp,
+            color = colorResource(R.color.orange),
+            modifier = Modifier
+                .padding(8.dp)
+                .constrainAs(priceTxt) {
+                    top.linkTo(dashLine.bottom)
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(parent.end, margin = 16.dp)
+                }
+        )
+
+        Image(
+            painter = painterResource(R.drawable.seat_black_ic),
+            contentDescription = "Seat icon",
+            modifier = Modifier
+                .padding(8.dp)
+                .constrainAs(seatIcon) {
+                    start.linkTo(parent.start, margin = 16.dp)
+                    top.linkTo(dashLine.bottom)
+                    bottom.linkTo(parent.bottom)
+                }
+        )
+
+        Text(
+            text = booking.typeClass.takeIf { it.isNotBlank() } ?: "N/A",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            color = colorResource(R.color.darkPurple2),
+            modifier = Modifier
+                .constrainAs(classTxt) {
+                    start.linkTo(seatIcon.end, margin = 4.dp)
+                    top.linkTo(seatIcon.top)
+                    bottom.linkTo(seatIcon.bottom)
+                }
+        )
+
+        Text(
+            text = booking.from.takeIf { it.isNotBlank() } ?: "N/A",
+            fontSize = 14.sp,
+            color = Color.Black,
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .constrainAs(fromTxt) {
+                    top.linkTo(timeTxt.bottom)
+                    start.linkTo(parent.start)
+                }
+        )
+
+        Text(
+            text = booking.fromShort.takeIf { it.isNotBlank() } ?: "N/A",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.Black,
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .constrainAs(fromShortTxt) {
+                    top.linkTo(fromTxt.bottom)
+                    start.linkTo(fromTxt.start)
+                    end.linkTo(fromTxt.end)
+                }
+        )
+
+        Text(
+            text = booking.to.takeIf { it.isNotBlank() } ?: "N/A",
+            fontSize = 14.sp,
+            color = Color.Black,
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .constrainAs(toTxt) {
+                    top.linkTo(timeTxt.bottom)
+                    end.linkTo(parent.end)
+                }
+        )
+
+        Text(
+            text = booking.toShort.takeIf { it.isNotBlank() } ?: "N/A",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.Black,
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .constrainAs(toShortTxt) {
+                    top.linkTo(toTxt.bottom)
+                    start.linkTo(toTxt.start)
+                    end.linkTo(toTxt.end)
+                }
+        )
     }
 }
