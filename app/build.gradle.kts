@@ -81,4 +81,6 @@ dependencies {
 
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.foundation:foundation:1.6.8")
+
+    implementation("com.google.firebase:firebase-auth:23.1.0")
 }

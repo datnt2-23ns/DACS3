@@ -3,123 +3,6 @@
 //import android.widget.Toast
 //import androidx.compose.foundation.background
 //import androidx.compose.foundation.layout.*
-//import androidx.compose.material3.*
-//import androidx.compose.runtime.*
-//import androidx.compose.ui.Alignment
-//import androidx.compose.ui.Modifier
-//import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.platform.LocalContext
-//import androidx.compose.ui.res.colorResource
-//import androidx.compose.ui.unit.dp
-//import androidx.compose.ui.unit.sp
-//import com.example.ticketbookingapp.Activities.Splash.GradientButton
-//import com.example.ticketbookingapp.Domain.FlightModel
-//import com.example.ticketbookingapp.Domain.UserModel
-//import com.example.ticketbookingapp.R
-//import com.example.ticketbookingapp.ViewModel.AdminViewModel
-//import kotlinx.coroutines.launch
-//
-//@Composable
-//fun AdminFlightManagementScreen(
-//    adminViewModel: AdminViewModel,
-//    user: UserModel,
-//    onBackToDashboard: () -> Unit
-//) {
-//    var isLoading by remember { mutableStateOf(false) }
-//    val coroutineScope = rememberCoroutineScope()
-//    val flights by adminViewModel.flights.collectAsState()
-//    val context = LocalContext.current
-//    val TAG = "AdminFlightManagementScreen"
-//
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(colorResource(R.color.darkPurple2))
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(32.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Top
-//        ) {
-//            Text(
-//                text = "Quản Lý Chuyến Bay",
-//                fontSize = 32.sp,
-//                color = Color.White
-//            )
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Text(
-//                text = "Chào, ${user.fullName}",
-//                fontSize = 20.sp,
-//                color = Color.White
-//            )
-//            Spacer(modifier = Modifier.height(32.dp))
-//
-//            flights.forEach { flight ->
-//                FlightItem(flight = flight, onDelete = {
-//                    coroutineScope.launch {
-//                        isLoading = true
-//                        try {
-//                            adminViewModel.deleteFlight(flight.FlightId) // Sử dụng FlightId
-//                            Toast.makeText(context, "Xóa chuyến bay thành công", Toast.LENGTH_SHORT).show()
-//                        } catch (e: Exception) {
-//                            Toast.makeText(context, "Lỗi: ${e.message}", Toast.LENGTH_SHORT).show()
-//                        } finally {
-//                            isLoading = false
-//                        }
-//                    }
-//                })
-//            }
-//
-//            Spacer(modifier = Modifier.height(32.dp))
-//            GradientButton(
-//                onClick = { /* TODO: Mở form thêm chuyến bay */ },
-//                text = "Thêm Chuyến Bay",
-//                padding = 0
-//            )
-//            Spacer(modifier = Modifier.height(16.dp))
-//            GradientButton(
-//                onClick = { onBackToDashboard() },
-//                text = "Quay Lại Dashboard",
-//                padding = 0
-//            )
-//        }
-//
-//        if (isLoading) {
-//            CircularProgressIndicator(
-//                modifier = Modifier.align(Alignment.Center)
-//            )
-//        }
-//    }
-//}
-//
-//@Composable
-//fun FlightItem(flight: FlightModel, onDelete: () -> Unit) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(8.dp)
-//            .background(colorResource(R.color.darkPurple), shape = MaterialTheme.shapes.medium),
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Column(modifier = Modifier.padding(16.dp)) {
-//            Text(text = "${flight.AirlineName} (${flight.FlightId})", color = Color.White)
-//            Text(text = "${flight.From} -> ${flight.To}", color = Color.White)
-//            Text(text = "Ngày: ${flight.Date}", color = Color.White)
-//        }
-//        Button(onClick = onDelete) {
-//            Text("Xóa")
-//        }
-//    }
-//}
-
-//package com.example.ticketbookingapp.Activities.Admin
-//
-//import android.widget.Toast
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.layout.*
 //import androidx.compose.foundation.lazy.LazyColumn
 //import androidx.compose.foundation.lazy.items
 //import androidx.compose.foundation.rememberScrollState
@@ -165,7 +48,7 @@
 //        Column(
 //            modifier = Modifier
 //                .fillMaxSize()
-//                .padding(16.dp), // Giảm padding để có thêm không gian
+//                .padding(16.dp),
 //            horizontalAlignment = Alignment.CenterHorizontally,
 //            verticalArrangement = Arrangement.Top
 //        ) {
@@ -182,10 +65,9 @@
 //            )
 //            Spacer(modifier = Modifier.height(16.dp))
 //
-//            // Giới hạn chiều cao LazyColumn để dành không gian cho các nút
 //            LazyColumn(
 //                modifier = Modifier
-//                    .weight(1f, fill = false) // Không cho phép chiếm hết không gian
+//                    .weight(1f, fill = false)
 //                    .fillMaxWidth(),
 //                verticalArrangement = Arrangement.spacedBy(8.dp)
 //            ) {
@@ -211,28 +93,26 @@
 //            }
 //
 //            Spacer(modifier = Modifier.height(16.dp))
-//            // Nút "Thêm Chuyến Bay" sử dụng Button tiêu chuẩn
 //            Button(
 //                onClick = { showAddFlightDialog = true },
 //                modifier = Modifier
 //                    .fillMaxWidth()
 //                    .height(48.dp),
 //                colors = ButtonDefaults.buttonColors(
-//                    containerColor = Color(0xFF6200EE), // Màu tím nổi bật
+//                    containerColor = Color(0xFF6200EE),
 //                    contentColor = Color.White
 //                )
 //            ) {
 //                Text("Thêm Chuyến Bay", fontSize = 16.sp)
 //            }
 //            Spacer(modifier = Modifier.height(8.dp))
-//            // Nút "Quay Lại Dashboard"
 //            Button(
 //                onClick = { onBackToDashboard() },
 //                modifier = Modifier
 //                    .fillMaxWidth()
 //                    .height(48.dp),
 //                colors = ButtonDefaults.buttonColors(
-//                    containerColor = Color(0xFF03DAC5), // Màu xanh để phân biệt
+//                    containerColor = Color(0xFF03DAC5),
 //                    contentColor = Color.White
 //                )
 //            ) {
@@ -291,16 +171,16 @@
 //
 //@Composable
 //fun FlightItem(flight: FlightModel, onEdit: () -> Unit, onDelete: () -> Unit) {
-//    Row(
+//    Column(
 //        modifier = Modifier
 //            .fillMaxWidth()
 //            .padding(8.dp)
-//            .background(colorResource(R.color.darkPurple), shape = MaterialTheme.shapes.medium),
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.CenterVertically
+//            .background(colorResource(R.color.darkPurple), shape = MaterialTheme.shapes.medium)
+//            .padding(16.dp),
+//        verticalArrangement = Arrangement.spacedBy(8.dp)
 //    ) {
-//        Column(modifier = Modifier.padding(16.dp)) {
-//            Text(text = "${flight.AirlineName} (${flight.FlightId})", color = Color.White)
+//        Column {
+//            Text(text = "${flight.AirlineName} (${flight.FlightId})", color = Color.White, fontSize = 16.sp)
 //            Text(text = "${flight.From} (${flight.FromShort}) -> ${flight.To} (${flight.ToShort})", color = Color.White)
 //            Text(text = "Ngày: ${flight.Date}", color = Color.White)
 //            Text(text = "Giờ: ${flight.Time}", color = Color.White)
@@ -310,13 +190,34 @@
 //            Text(text = "Loại ghế: ${flight.ClassSeat}", color = Color.White)
 //            Text(text = "Loại vé: ${flight.TypeClass}", color = Color.White)
 //        }
-//        Row {
-//            Button(onClick = onEdit) {
-//                Text("Sửa")
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Button(
+//                onClick = onEdit,
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .height(40.dp),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = Color(0xFF6200EE),
+//                    contentColor = Color.White
+//                )
+//            ) {
+//                Text("Sửa", fontSize = 14.sp)
 //            }
 //            Spacer(modifier = Modifier.width(8.dp))
-//            Button(onClick = onDelete) {
-//                Text("Xóa")
+//            Button(
+//                onClick = onDelete,
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .height(40.dp),
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = Color(0xFFD32F2F),
+//                    contentColor = Color.White
+//                )
+//            ) {
+//                Text("Xóa", fontSize = 14.sp)
 //            }
 //        }
 //    }
@@ -464,16 +365,20 @@
 //                    onValueChange = { value -> flightId = value },
 //                    label = { Text("Mã chuyến bay", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -482,16 +387,20 @@
 //                    onValueChange = { value -> airlineName = value },
 //                    label = { Text("Tên hãng bay", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -500,16 +409,20 @@
 //                    onValueChange = { value -> airlineLogo = value },
 //                    label = { Text("URL logo hãng bay", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -518,16 +431,20 @@
 //                    onValueChange = { value -> from = value },
 //                    label = { Text("Điểm đi", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -536,16 +453,20 @@
 //                    onValueChange = { value -> fromShort = value },
 //                    label = { Text("Mã điểm đi (VD: JFK)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -554,16 +475,20 @@
 //                    onValueChange = { value -> to = value },
 //                    label = { Text("Điểm đến", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -572,16 +497,20 @@
 //                    onValueChange = { value -> toShort = value },
 //                    label = { Text("Mã điểm đến (VD: LAX)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -590,16 +519,20 @@
 //                    onValueChange = { value -> date = value },
 //                    label = { Text("Ngày (dd mmm, yyyy)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -608,16 +541,20 @@
 //                    onValueChange = { value -> time = value },
 //                    label = { Text("Giờ (HH:mm)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -626,16 +563,20 @@
 //                    onValueChange = { value -> arriveTime = value },
 //                    label = { Text("Thời gian bay (Xh Ym)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -644,16 +585,20 @@
 //                    onValueChange = { value -> price = value },
 //                    label = { Text("Giá vé", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -662,16 +607,20 @@
 //                    onValueChange = { value -> numberSeat = value },
 //                    label = { Text("Số ghế", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -680,16 +629,20 @@
 //                    onValueChange = { value -> classSeat = value },
 //                    label = { Text("Loại ghế (Economy class, Business class, First class)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -698,16 +651,20 @@
 //                    onValueChange = { value -> typeClass = value },
 //                    label = { Text("Loại vé (Economy, Business, First)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(16.dp))
@@ -726,7 +683,7 @@
 //                            .weight(1f)
 //                            .height(48.dp),
 //                        colors = ButtonDefaults.buttonColors(
-//                            containerColor = Color(0xFFB0BEC5), // Màu xám
+//                            containerColor = Color(0xFFB0BEC5),
 //                            contentColor = Color.White
 //                        )
 //                    ) {
@@ -739,7 +696,7 @@
 //                            .weight(1f)
 //                            .height(48.dp),
 //                        colors = ButtonDefaults.buttonColors(
-//                            containerColor = Color(0xFF6200EE), // Màu tím
+//                            containerColor = Color(0xFF6200EE),
 //                            contentColor = Color.White
 //                        )
 //                    ) {
@@ -776,7 +733,7 @@
 //        "Philadelphia", "Chicago", "Las Vegas", "Miami", "Seattle"
 //    )
 //    val validTypeClasses = listOf("Economy", "Business", "First")
-//    val validClassSeats = listOf("Economy class", "Business class", "First class")
+//    var validClassSeats = listOf("Economy class", "Business class", "First class")
 //    val context = LocalContext.current
 //
 //    LaunchedEffect(validateTrigger) {
@@ -896,16 +853,20 @@
 //                    onValueChange = { value -> flightId = value },
 //                    label = { Text("Mã chuyến bay", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -914,16 +875,20 @@
 //                    onValueChange = { value -> airlineName = value },
 //                    label = { Text("Tên hãng bay", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -932,16 +897,20 @@
 //                    onValueChange = { value -> airlineLogo = value },
 //                    label = { Text("URL logo hãng bay", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -950,16 +919,20 @@
 //                    onValueChange = { value -> from = value },
 //                    label = { Text("Điểm đi", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -968,16 +941,20 @@
 //                    onValueChange = { value -> fromShort = value },
 //                    label = { Text("Mã điểm đi (VD: JFK)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -986,16 +963,20 @@
 //                    onValueChange = { value -> to = value },
 //                    label = { Text("Điểm đến", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -1004,16 +985,20 @@
 //                    onValueChange = { value -> toShort = value },
 //                    label = { Text("Mã điểm đến (VD: LAX)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -1022,16 +1007,20 @@
 //                    onValueChange = { value -> date = value },
 //                    label = { Text("Ngày (dd mmm, yyyy)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -1040,16 +1029,20 @@
 //                    onValueChange = { value -> time = value },
 //                    label = { Text("Giờ (HH:mm)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -1058,16 +1051,20 @@
 //                    onValueChange = { value -> arriveTime = value },
 //                    label = { Text("Thời gian bay (Xh Ym)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -1076,16 +1073,20 @@
 //                    onValueChange = { value -> price = value },
 //                    label = { Text("Giá vé", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -1094,16 +1095,20 @@
 //                    onValueChange = { value -> numberSeat = value },
 //                    label = { Text("Số ghế", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -1112,16 +1117,20 @@
 //                    onValueChange = { value -> classSeat = value },
 //                    label = { Text("Loại ghế (Economy class, Business class, First class)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(8.dp))
@@ -1130,16 +1139,20 @@
 //                    onValueChange = { value -> typeClass = value },
 //                    label = { Text("Loại vé (Economy, Business, First)", color = Color.White) },
 //                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.colors(
+//                    colors = TextFieldDefaults.outlinedTextFieldColors(
 //                        focusedTextColor = Color.White,
 //                        unfocusedTextColor = Color.White,
+//                        disabledTextColor = Color.Gray,
+//                        errorTextColor = Color.Red,
 //                        cursorColor = Color.White,
-//                        focusedContainerColor = Color.Transparent,
-//                        unfocusedContainerColor = Color.Transparent,
-//                        focusedIndicatorColor = Color.White,
-//                        unfocusedIndicatorColor = Color.White,
+//                        focusedBorderColor = Color.White,
+//                        unfocusedBorderColor = Color.White,
+//                        disabledBorderColor = Color.Gray,
+//                        errorBorderColor = Color.Red,
 //                        focusedLabelColor = Color.White,
-//                        unfocusedLabelColor = Color.White
+//                        unfocusedLabelColor = Color.White,
+//                        disabledLabelColor = Color.Gray,
+//                        errorLabelColor = Color.Red
 //                    )
 //                )
 //                Spacer(modifier = Modifier.height(16.dp))
@@ -1158,7 +1171,7 @@
 //                            .weight(1f)
 //                            .height(48.dp),
 //                        colors = ButtonDefaults.buttonColors(
-//                            containerColor = Color(0xFFB0BEC5), // Màu xám
+//                            containerColor = Color(0xFFB0BEC5),
 //                            contentColor = Color.White
 //                        )
 //                    ) {
@@ -1171,7 +1184,7 @@
 //                            .weight(1f)
 //                            .height(48.dp),
 //                        colors = ButtonDefaults.buttonColors(
-//                            containerColor = Color(0xFF6200EE), // Màu tím
+//                            containerColor = Color(0xFF6200EE),
 //                            contentColor = Color.White
 //                        )
 //                    ) {
@@ -1222,10 +1235,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -1251,6 +1267,12 @@ fun AdminFlightManagementScreen(
     val flights by adminViewModel.flights.collectAsState()
     val context = LocalContext.current
 
+    val gradientColors = listOf(
+        colorResource(R.color.purple_500),
+        colorResource(R.color.pink)
+    )
+    val gradientBrush = Brush.horizontalGradient(colors = gradientColors)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -1266,15 +1288,11 @@ fun AdminFlightManagementScreen(
             Text(
                 text = "Quản Lý Chuyến Bay",
                 fontSize = 32.sp,
-                color = Color.White
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Chào, ${user.fullName}",
-                fontSize = 20.sp,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             LazyColumn(
                 modifier = Modifier
@@ -1310,9 +1328,11 @@ fun AdminFlightManagementScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6200EE),
-                    contentColor = Color.White
-                )
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White,
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = Color.Gray
+                ),
             ) {
                 Text("Thêm Chuyến Bay", fontSize = 16.sp)
             }
@@ -1323,9 +1343,11 @@ fun AdminFlightManagementScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF03DAC5),
-                    contentColor = Color.White
-                )
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White,
+                    disabledContainerColor = Color.Transparent,
+                    disabledContentColor = Color.Gray
+                ),
             ) {
                 Text("Quay Lại Dashboard", fontSize = 16.sp)
             }
@@ -1411,7 +1433,7 @@ fun FlightItem(flight: FlightModel, onEdit: () -> Unit, onDelete: () -> Unit) {
                     .weight(1f)
                     .height(40.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6200EE),
+                    containerColor = Color(0xFF60EE),
                     contentColor = Color.White
                 )
             ) {

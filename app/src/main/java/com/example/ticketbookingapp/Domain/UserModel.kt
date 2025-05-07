@@ -10,5 +10,6 @@ data class UserModel(
     val fullName: String = "",
     val dateOfBirth: String = "",
     val gender: String = "",
-    val phoneNumber: String = ""
+    val phoneNumber: String = "",
+    val isDemo: Boolean = true
 ) : Serializable
